@@ -7,6 +7,7 @@ import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 import org.slf4j.Logger;
+import tk.booky.stl.commands.ReloadCommand;
 import tk.booky.stl.config.ConfigurationReader;
 import tk.booky.stl.config.TabListConfiguration;
 import tk.booky.stl.utils.SimpleTablistManager;
@@ -47,6 +48,8 @@ public class SimpleTablistMain {
 
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
+        server.getCommandManager().register(ReloadCommand.constructMeta(server.getCommandManager()), new ReloadCommand());
+
         manager = new SimpleTablistManager(server, null);
         manager.reloadConfiguration().reloadHeaderFooter();
 
