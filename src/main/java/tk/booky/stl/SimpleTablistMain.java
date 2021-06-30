@@ -9,6 +9,7 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import org.slf4j.Logger;
 import tk.booky.stl.config.ConfigurationReader;
 import tk.booky.stl.config.TabListConfiguration;
+import tk.booky.stl.utils.SimpleTablistManager;
 
 import java.nio.file.Path;
 
@@ -28,6 +29,7 @@ public class SimpleTablistMain {
     private final Path dataDirectory;
     private final ConfigurationReader<TabListConfiguration> reader = new ConfigurationReader<>();
     private TabListConfiguration config;
+    private SimpleTablistManager manager;
 
     @Inject
     public SimpleTablistMain(Logger logger, ProxyServer server, @DataDirectory Path dataDirectory) {
@@ -44,6 +46,8 @@ public class SimpleTablistMain {
 
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
+        manager = new SimpleTablistManager(server, null);
+        manager.reloadConfiguration().reloadHeaderFooter();
     }
 
     public Logger getLogger() {
@@ -56,6 +60,10 @@ public class SimpleTablistMain {
 
     public Path getDataDirectory() {
         return dataDirectory;
+    }
+
+    public SimpleTablistManager getManager() {
+        return manager;
     }
 
     public ConfigurationReader<TabListConfiguration> getReader() {
