@@ -10,6 +10,8 @@ import org.slf4j.Logger;
 import tk.booky.stl.commands.ReloadCommand;
 import tk.booky.stl.config.ConfigurationReader;
 import tk.booky.stl.config.TabListConfiguration;
+import tk.booky.stl.listener.ServerConnectedListener;
+import tk.booky.stl.listener.TabListUpdateListener;
 import tk.booky.stl.utils.SimpleTablistManager;
 import tk.booky.stl.utils.TablistUpdaterRunnable;
 
@@ -49,6 +51,8 @@ public class SimpleTablistMain {
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
         server.getCommandManager().register(ReloadCommand.constructMeta(server.getCommandManager()), new ReloadCommand());
+
+        server.getEventManager().register(this, new TabListUpdateListener());
 
         manager = new SimpleTablistManager(server, null);
         manager.reloadConfiguration().reloadHeaderFooter();
