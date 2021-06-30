@@ -1,0 +1,37 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
+plugins {
+    id 'java'
+    id 'idea'
+}
+
+group = 'tk.booky'
+version = '1.0.0'
+
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+
+    maven { url = 'https://repo.velocitypowered.com/snapshots/' }
+    maven { url = 'https://repo.spongepowered.org/maven' }
+    maven { url = 'https://libraries.minecraft.net/' }
+}
+
+dependencies {
+    implementation 'net.luckperms:api:5.3'
+
+    implementation 'com.velocitypowered:velocity-api:3.0.0-SNAPSHOT'
+    annotationProcessor 'com.velocitypowered:velocity-api:3.0.0-SNAPSHOT'
+}
+
+task processSources(type: Sync) {
+    from sourceSets.main.java.srcDirs
+    inputs.property 'version', version
+    filter ReplaceTokens, tokens: [version: version]
+    into "$buildDir/src"
+}
+
+compileJava.source = processSources.outputs
