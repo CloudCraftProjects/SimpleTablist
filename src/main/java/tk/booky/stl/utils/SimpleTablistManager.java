@@ -12,7 +12,10 @@ import tk.booky.stl.SimpleTablistMain;
 import tk.booky.stl.config.TabListConfiguration;
 import tk.booky.stl.prefix.PrefixProvider;
 
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 
 public class SimpleTablistManager {
 
@@ -48,9 +51,16 @@ public class SimpleTablistManager {
     }
 
     public void updateTablist(Player player) {
+        Set<UUID> updated = new HashSet<>();
+
         for (Player target : server.getAllPlayers()) {
-            remove(target, player);
-            add(target, player);
+            updated.add(target.getUniqueId());
+            update(target, player);
+        }
+
+        for (TabListEntry entry : player.getTabList().getEntries()) {
+            if (updated.contains(entry.getProfile().getId())) continue;
+            player.getTabList().removeEntry(entry.getProfile().getId());
         }
 
         player.sendPlayerListHeaderAndFooter(header, footer);
@@ -60,7 +70,7 @@ public class SimpleTablistManager {
         player.getTabList().removeEntry(target.getUniqueId());
     }
 
-    public void add(Player target, Player player) {
+    public void update(Player target, Player player) {
         Optional<ServerConnection> targetServer = target.getCurrentServer(), playerServer = player.getCurrentServer();
         if (targetServer.isEmpty() || playerServer.isEmpty()) return;
 
@@ -69,13 +79,17 @@ public class SimpleTablistManager {
         Component displayName = prefix.append(name).append(suffix);
 
         int gamemode = targetServer.get().getServerInfo().equals(playerServer.get().getServerInfo()) ? 1 : 3;
+        Optional<TabListEntry> entry = player.getTabList().getEntry(target.getUniqueId());
 
-        player.getTabList().addEntry(TabListEntry.builder()
-                .tabList(player.getTabList())
-                .displayName(displayName)
-                .gameMode(gamemode)
-                .latency(69)
-                .profile(target.getGameProfile())
-                .build());
+        if (entry.isPresent()) {
+            entry.get().setDisplayName(displayName).setGameMode(gamemode);
+        } else {
+            TabListEntry.Builder builder = TabListEntry.builder();
+
+            builder.latency(42).profile(target.getGameProfile());
+            builder.displayName(displayName).gameMode(gamemode);
+
+            player.getTabList().addEntry(builder.tabList(player.getTabList()).build());
+        }
     }
 }
