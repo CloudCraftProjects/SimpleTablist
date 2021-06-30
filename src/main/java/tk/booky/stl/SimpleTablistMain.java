@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import tk.booky.stl.config.ConfigurationReader;
 import tk.booky.stl.config.TabListConfiguration;
 import tk.booky.stl.utils.SimpleTablistManager;
+import tk.booky.stl.utils.TablistUpdaterRunnable;
 
 import java.nio.file.Path;
 
@@ -48,6 +49,8 @@ public class SimpleTablistMain {
     public void onProxyInitialization(ProxyInitializeEvent event) {
         manager = new SimpleTablistManager(server, null);
         manager.reloadConfiguration().reloadHeaderFooter();
+
+        new TablistUpdaterRunnable(manager).start(this, server.getScheduler());
     }
 
     public Logger getLogger() {
