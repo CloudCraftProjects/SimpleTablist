@@ -53,6 +53,7 @@ public class SimpleTablistMain {
         server.getCommandManager().register(ReloadCommand.constructMeta(server.getCommandManager()), new ReloadCommand());
 
         server.getEventManager().register(this, new TabListUpdateListener());
+        server.getEventManager().register(this, new ServerConnectedListener());
 
         manager = new SimpleTablistManager(server, null);
         manager.reloadConfiguration().reloadHeaderFooter();
