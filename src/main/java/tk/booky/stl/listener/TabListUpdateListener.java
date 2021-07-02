@@ -9,6 +9,18 @@ public class TabListUpdateListener {
 
     @Subscribe
     public void onTabListUpdate(TabListUpdateEvent event) {
-        event.setResult(ResultedEvent.GenericResult.denied());
+        switch (event.getAction()) {
+            case ADD_PLAYER:
+            case REMOVE_PLAYER:
+                event.setResult(ResultedEvent.GenericResult.allowed());
+                break;
+            case UPDATE_GAMEMODE:
+            case UPDATE_LATENCY:
+            case UPDATE_DISPLAY_NAME:
+                event.setResult(ResultedEvent.GenericResult.denied());
+                break;
+            default:
+                throw new IllegalStateException("You have completed the challenge [How Did We Get Here?]");
+        }
     }
 }
